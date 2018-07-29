@@ -1,4 +1,4 @@
-package com.example.aman.shoocaltaskboth;
+package com.example.aman.shoocaltaskboth.InterfacesAndAdapters;
 
 import android.content.Context;
 import android.util.Log;
@@ -9,6 +9,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.example.aman.shoocaltaskboth.R;
 import com.example.aman.shoocaltaskboth.model.SingleRow;
 
 import java.util.HashMap;

@@ -1,23 +1,22 @@
 package com.example.aman.shoocaltaskboth;
 
 import android.app.ProgressDialog;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.aman.shoocaltaskboth.model.Message;
+import com.example.aman.shoocaltaskboth.InterfacesAndAdapters.ApiInterface;
+import com.example.aman.shoocaltaskboth.Util.DbHelper;
+import com.example.aman.shoocaltaskboth.model.ApiClient;
 import com.example.aman.shoocaltaskboth.model.MyResult;
 import com.example.aman.shoocaltaskboth.model.RequestData;
-import com.google.gson.Gson;
 
 import java.io.IOException;
-import java.util.List;
 
 import okhttp3.Credentials;
 import retrofit2.Call;
@@ -120,6 +119,14 @@ public class TaskOne extends AppCompatActivity {
             } else {
                 Toast.makeText(TaskOne.this, "Request Sent With Success Status " + myResult.success, Toast.LENGTH_SHORT).show();
                 Toast.makeText(TaskOne.this, myResult.toString(), Toast.LENGTH_SHORT).show();
+
+                DbHelper dbHelper=new DbHelper(TaskOne.this);
+                boolean insertResponse = dbHelper.insertResponse(myResult);
+                if (insertResponse)
+                {
+                    Toast.makeText(TaskOne.this, "SuccessFully Inserted Into DB", Toast.LENGTH_SHORT).show();
+                }
+
             }
         }
     }

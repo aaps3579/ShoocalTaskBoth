@@ -1,4 +1,4 @@
-package com.example.aman.shoocaltaskboth;
+package com.example.aman.shoocaltaskboth.InterfacesAndAdapters;
 
 import com.example.aman.shoocaltaskboth.model.MyResult;
 import com.example.aman.shoocaltaskboth.model.RequestData;

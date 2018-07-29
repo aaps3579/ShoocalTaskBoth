@@ -3,13 +3,10 @@ package com.example.aman.shoocaltaskboth;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.ExpandableListView;
-import android.widget.Toast;
 
+import com.example.aman.shoocaltaskboth.InterfacesAndAdapters.MyExpandableAdapter;
 import com.example.aman.shoocaltaskboth.model.ExpandableListData;
-
-import java.util.List;
 
 public class TaskTwo extends AppCompatActivity {
 
