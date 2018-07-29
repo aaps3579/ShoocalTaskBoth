@@ -1,6 +1,7 @@
 package com.example.aman.shoocaltaskboth;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,6 @@ import com.example.aman.shoocaltaskboth.model.SingleRow;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 public class MyExpandableAdapter extends BaseExpandableListAdapter {
     Context context;
@@ -23,34 +23,33 @@ public class MyExpandableAdapter extends BaseExpandableListAdapter {
         this.context = context;
         this.expandableTitleData = expandableTitleData;
         this.expandableDataDetail = expandableDataDetail;
+
     }
 
     @Override
     public int getGroupCount() {
+        Log.d("Task", "Group Count = " + expandableTitleData.size());
         return expandableTitleData.size();
     }
 
     @Override
     public int getChildrenCount(int i) {
 
+        Log.d("Task", "Children Count = " + expandableDataDetail.get(expandableTitleData.get(i)).size());
         return expandableDataDetail.get(expandableTitleData.get(i)).size();
     }
 
     @Override
     public Object getGroup(int i) {
+        Log.d("Task", "Group Returned " + i);
+
         return expandableTitleData.get(i);
     }
 
     @Override
     public Object getChild(int i, int i1) {
-        SingleRow singleRowTitle = expandableTitleData.get(i);
-        Set<SingleRow> singleRowSet = expandableDataDetail.keySet();
-        for (SingleRow s : singleRowSet) {
-            if (s.getName().equals(singleRowTitle.getName())) {
-                return s;
-            }
-        }
-        return null;
+        Log.d("Task", "Child Returned " + i + " , " + i1);
+        return expandableDataDetail.get(expandableTitleData.get(i)).get(i1);
     }
 
     @Override
@@ -70,40 +69,42 @@ public class MyExpandableAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getGroupView(int i, boolean b, View view, ViewGroup viewGroup) {
-        SingleRow singleRowTitle = (SingleRow) getGroup(i);
+        String title = (String) getGroup(i);
         if (view == null) {
 
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = layoutInflater.inflate(R.layout.expandable_title_and_child_view, null);
+            view = layoutInflater.inflate(R.layout.expandable_title_view, null);
         }
         TextView title_tv = (TextView) view.findViewById(R.id.tv_name);
         final CheckBox cb_title = (CheckBox) view.findViewById(R.id.cb_title);
-        title_tv.setText(singleRowTitle.getName());
-        if (singleRowTitle.isStatus()) {
-            cb_title.setChecked(true);
-        } else {
-            cb_title.setChecked(false);
+        title_tv.setText(title);
+
+        final List<SingleRow> singleGroupList = expandableDataDetail.get(title);
+        boolean flag = false;
+
+        for (SingleRow s : singleGroupList) {
+            if (s.isStatus() == false) {
+                flag = true;
+            }
         }
+        if (flag) {
+            cb_title.setChecked(false);
+        } else {
+            cb_title.setChecked(true);
+        }
+
         cb_title.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (cb_title.isChecked()) {
                     //tick all child
-                    Set<SingleRow> keySet = expandableDataDetail.keySet();
-                    for (SingleRow s : keySet) {
-                        List<SingleRow> childList = expandableDataDetail.get(s);
-                        for (int i = 0; i < childList.size(); i++) {
-                            childList.get(i).setStatus(true);
-                        }
+                    for (int i = 0; i < singleGroupList.size(); i++) {
+                        singleGroupList.get(i).setStatus(true);
                     }
                 } else {
                     //untick all child
-                    Set<SingleRow> keySet = expandableDataDetail.keySet();
-                    for (SingleRow s : keySet) {
-                        List<SingleRow> childList = expandableDataDetail.get(s);
-                        for (int i = 0; i < childList.size(); i++) {
-                            childList.get(i).setStatus(false);
-                        }
+                    for (int i = 0; i < singleGroupList.size(); i++) {
+                        singleGroupList.get(i).setStatus(false);
                     }
                 }
                 notifyDataSetChanged();
@@ -114,13 +115,14 @@ public class MyExpandableAdapter extends BaseExpandableListAdapter {
 
     @Override
     public View getChildView(int i, int i1, boolean b, View view, ViewGroup viewGroup) {
+        Log.d("Task", "In Child View");
         final SingleRow singleRowChild = (SingleRow) getChild(i, i1);
         if (view == null) {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = layoutInflater.inflate(R.layout.expandable_title_and_child_view, null);
+            view = layoutInflater.inflate(R.layout.expandable_child_view, null);
         }
-        TextView title_tv = (TextView) view.findViewById(R.id.tv_name);
-        final CheckBox cb_title = (CheckBox) view.findViewById(R.id.cb_title);
+        TextView title_tv = (TextView) view.findViewById(R.id.tv_child);
+        final CheckBox cb_title = (CheckBox) view.findViewById(R.id.cb_child);
         title_tv.setText(singleRowChild.getName());
         if (singleRowChild.isStatus()) {
             cb_title.setChecked(true);

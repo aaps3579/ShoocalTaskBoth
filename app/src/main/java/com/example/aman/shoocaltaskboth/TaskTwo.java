@@ -2,7 +2,10 @@ package com.example.aman.shoocaltaskboth;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.Toast;
 
 import com.example.aman.shoocaltaskboth.model.ExpandableListData;
 
@@ -20,9 +23,8 @@ public class TaskTwo extends AppCompatActivity {
         setContentView(R.layout.activity_task_two);
         expandableListView = (ExpandableListView) findViewById(R.id.expandable_lv);
         myExpandableAdapter = new MyExpandableAdapter(this, ExpandableListData.getTitleData(), ExpandableListData.getFullData());
+        Log.d("Task", ExpandableListData.getFullData().size() + " , " + ExpandableListData.getTitleData().size());
         expandableListView.setAdapter(myExpandableAdapter);
-        myExpandableAdapter.notifyDataSetChanged();
-
     }
 
 
