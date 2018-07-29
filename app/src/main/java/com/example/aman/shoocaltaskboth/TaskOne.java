@@ -1,18 +1,23 @@
 package com.example.aman.shoocaltaskboth;
 
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.example.aman.shoocaltaskboth.model.Message;
 import com.example.aman.shoocaltaskboth.model.MyResult;
 import com.example.aman.shoocaltaskboth.model.RequestData;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.Credentials;
 import retrofit2.Call;
@@ -21,6 +26,7 @@ import retrofit2.Response;
 public class TaskOne extends AppCompatActivity {
     EditText et_first_name, et_last_name, et_phone, et_address, et_restaurant_name;
     Spinner sp_request_type;
+    ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +37,11 @@ public class TaskOne extends AppCompatActivity {
 
     RequestData makeRequest() {
 
-        String first_name = et_first_name.getText().toString();
-        String last_name = et_last_name.getText().toString();
-        String phone = et_phone.getText().toString();
-        String address = et_address.getText().toString();
-        String restaurant_type = et_restaurant_name.getText().toString();
+        String first_name = et_first_name.getText().toString().trim();
+        String last_name = et_last_name.getText().toString().trim();
+        String phone = et_phone.getText().toString().trim();
+        String address = et_address.getText().toString().trim();
+        String restaurant_type = et_restaurant_name.getText().toString().trim();
         String selectedType = (String) sp_request_type.getSelectedItem();
         int type = 0;
         if (selectedType.equalsIgnoreCase("owner"))
@@ -63,29 +69,58 @@ public class TaskOne extends AppCompatActivity {
 
     //button listener
     public void sendPostReq(View view) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                RequestData requestData = makeRequest();
-                if (requestData == null) {
-                    Toast.makeText(TaskOne.this, "Please Fill All Details", Toast.LENGTH_SHORT).show();
-                } else {
-                    ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
-                    String credentials = Credentials.basic("admin", "1234");
-                    Call<MyResult> responseCall = apiInterface.sendRequest(credentials, requestData);
-                    try {
-                        Response<MyResult> resultResponse = responseCall.execute();
-                        MyResult myResult = resultResponse.body();
+        RequestData requestData = makeRequest();
+        if (requestData == null) {
+            Toast.makeText(this, "Please Fill All Fields!", Toast.LENGTH_SHORT).show();
+        } else {
+            MyNetworkTask myNetworkTask = new MyNetworkTask(requestData);
+            myNetworkTask.execute();
+        }
 
-                        Log.d("TAG", " Response " + responseCall.isExecuted() + "  Result = " + resultResponse.isSuccessful()+" "+resultResponse.message());
+    }
 
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+    class MyNetworkTask extends AsyncTask<String, Integer, MyResult> {
 
-                }
+        RequestData requestData;
 
+        MyNetworkTask(RequestData requestData) {
+            this.requestData = requestData;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog = new ProgressDialog(TaskOne.this);
+            progressDialog.setMessage("Please Wait");
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected MyResult doInBackground(String... strings) {
+            ApiInterface apiInterface = ApiClient.getClient().create(ApiInterface.class);
+            String credentials = Credentials.basic("admin", "1234");
+            Call<MyResult> responseCall = apiInterface.sendRequest(credentials, requestData);
+            try {
+                Response<MyResult> resultResponse = responseCall.execute();
+                MyResult myResult = resultResponse.body();
+                return myResult;
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        }).start();
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(MyResult myResult) {
+            progressDialog.dismiss();
+            if (myResult == null) {
+                Toast.makeText(TaskOne.this, "Error Sending Request", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(TaskOne.this, "Request Sent With Success Status " + myResult.success, Toast.LENGTH_SHORT).show();
+                Toast.makeText(TaskOne.this, myResult.toString(), Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

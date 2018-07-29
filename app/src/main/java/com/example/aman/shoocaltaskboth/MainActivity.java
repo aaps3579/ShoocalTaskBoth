@@ -19,6 +19,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickTask2(View view) {
 
-        startActivity(new Intent(this, TaskOne.class));
+        startActivity(new Intent(this, TaskTwo.class));
     }
 }

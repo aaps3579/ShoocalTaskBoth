@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorLightPrimary"
     android:gravity="center_horizontal"
     android:padding="20dp"
     tools:context=".MainActivity">
@@ -12,16 +13,20 @@
         android:id="@+id/bt_task1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TASK 1"
+        android:background="@color/colorDivider"
         android:onClick="onClickTask1"
-        android:textSize="20sp" />
+        android:text="TASK 1"
+        android:textAppearance="@style/TextAppearance.AppCompat" />
 
     <Button
         android:id="@+id/bt_task2"
+        style="@style/Widget.AppCompat.Button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/bt_task1"
+        android:layout_marginTop="20dp"
+        android:background="@color/colorDivider"
         android:onClick="onClickTask2"
         android:text="TASK 2"
-        android:textSize="20sp" />
+        android:textAppearance="@style/TextAppearance.AppCompat" />
 </RelativeLayout>

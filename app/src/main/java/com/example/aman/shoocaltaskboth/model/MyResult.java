@@ -1,34 +1,9 @@
 package com.example.aman.shoocaltaskboth.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-class Message {
-    public int Status;
-    public String Message;
-
-    public Message(int status, String message) {
-        Status = status;
-        Message = message;
-    }
-
-    public int getStatus() {
-        return Status;
-    }
-
-    public void setStatus(int status) {
-        Status = status;
-    }
-
-    public String getMessage() {
-        return Message;
-    }
-
-    public void setMessage(String message) {
-        Message = message;
-    }
-}
-
-public class MyResult {
+public class MyResult implements Serializable {
     public boolean success;
     public boolean error;
     public List<Message> message;
@@ -61,5 +36,14 @@ public class MyResult {
 
     public void setMessage(List<Message> message) {
         this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        String result = "";
+        for (Message m : message) {
+            result += "Status = " + m.getStatus() + " \n Message = " + m.getMessage() + "\n";
+        }
+        return "Success " + success + " , Error =" + error + " Message List = " + result;
     }
 }
